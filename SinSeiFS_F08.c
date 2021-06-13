@@ -16,7 +16,7 @@
 static  const  char *dirpath = "/home/akmal/Downloads";
 static const char *log_path = "/home/akmal/SinSeifs.log";
 /*
-    Fungsi ini akan dipanggil ketika sistem meminta SSFS
+    Fungsi ini akan dipanggil ketika sistem meminta SinSeiFS
     untuk atribu-atribut dari file spesifik.  
 */
 
