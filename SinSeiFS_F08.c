@@ -1,4 +1,4 @@
-#define FUSE_USE_VERSION 28
+##define FUSE_USE_VERSION 28
 #include <fuse.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,15 +13,13 @@
 #endif
 
 
-static  const  char *dirpath = "/home/akmal/Downloads";
+static const char *dirpath = "/home/akmal/Downloads";
 static const char *log_path = "/home/akmal/SinSeifs.log";
 /*
     Fungsi ini akan dipanggil ketika sistem meminta SinSeiFS
     untuk atribu-atribut dari file spesifik.  
 */
 
-char lower[] = "abcdefghijklmnopqrstuvwxyz";
-char upper[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 void encrypt(char *str)
 {
@@ -112,15 +110,13 @@ void decrypt(char *str)
     }
 }
 
-
-
 int print_info_command(char *command, char *desc){
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     char mains[1000];
-    sprintf(mains,"INFO::%02d%02d%02d-%02d:%02d:%02d::%s::%s::%s\n",
-        (tm.tm_year + 1900) % 1000, tm.tm_mon + 1, 
-        tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, command, desc, desc);
+    sprintf(mains,"INFO::%02d%02d%02d-%02d:%02d:%02d::%s::%s\n",
+        tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,  
+        tm.tm_hour, tm.tm_min, tm.tm_sec, command, desc);
     printf("%s", mains);
     FILE *foutput = fopen(log_path, "a+");
     fputs(mains, foutput);
@@ -132,9 +128,9 @@ int print_warning_command(char *command, char *desc){
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     char mains[1000];
-    sprintf(mains,"WARNING::%02d%02d%02d-%02d:%02d:%02d::%s::%s::%s\n",
-        (tm.tm_year + 1900) % 1000, tm.tm_mon + 1, 
-        tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, command, desc, desc);
+    sprintf(mains,"WARNING::%02d%02d%04d-%02d:%02d:%02d::%s::%s\n",
+        tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,  
+        tm.tm_hour, tm.tm_min, tm.tm_sec, command, desc);
     printf("%s", mains);
     FILE *foutput = fopen(log_path, "a+");
     fputs(mains, foutput);
@@ -152,7 +148,7 @@ static int xmp_getattr(const char *path, struct stat *st){
     char name[1000];
     strcpy(paths, path);
     strcpy(name,path);
-    if(strstr(path, "AtoZ_")!=NULL)
+    if(strstr(path, "/AtoZ_")!=NULL)
     {
         decrypt(name);
     }
@@ -178,7 +174,7 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     printf("readdir\n");
     char fpath[1000];
      int mode=0;
-    if(strstr(path, "AtoZ_")!=NULL)
+    if(strstr(path, "/AtoZ_")!=NULL)
     {
         mode=1;
     }
@@ -197,8 +193,6 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     char paths[100];
    
     strcpy(paths, path);
-    // (void) offset;
-    // (void) fi;
     if(print_info_command("READDIR", paths)){
         dp = opendir(fpath);
         if(dp == NULL){
@@ -616,6 +610,7 @@ static int xmp_write(const char* path, char *buf, size_t size, off_t offset,
     return 0;
 }
 
+
 static int xmp_statfs(const char* path, struct statvfs* stbuf){
     printf("enter => statfs");
     int res;
@@ -650,11 +645,10 @@ static int xmp_fsync(const char* path, int isdatasync, struct fuse_file_info* fi
     return 0;
 }
 
-// Warning level command
 static int xmp_rmdir(const char *path){
     printf("Enter => rmdir\n");
     int res;
-    char fpath[500] = "/home/akmal/Donwloads";
+    char fpath[500] = "/home/akmal/Downloads";
     strcat(fpath, path);
     char paths[100];
     strcpy(paths, path);
@@ -701,13 +695,14 @@ static struct fuse_operations xmp_oper = {
     .chmod = xmp_chmod,
     .chown = xmp_chown,
     .truncate = xmp_truncate,
+
     .open = xmp_open,
     .read = xmp_read,
     .write = xmp_write,
     .statfs = xmp_statfs,
     .release = xmp_release,
     .fsync = xmp_fsync,
-
+  
 };
 
 
