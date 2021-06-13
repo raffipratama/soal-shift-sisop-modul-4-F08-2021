@@ -114,7 +114,7 @@ int print_info_command(char *command, char *desc){
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     char mains[1000];
-    sprintf(mains,"INFO::%02d%02d%02d-%02d:%02d:%02d::%s::%s\n",
+    sprintf(mains,"INFO::%02d%02d%04d-%02d:%02d:%02d::%s::%s\n",
         tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,  
         tm.tm_hour, tm.tm_min, tm.tm_sec, command, desc);
     printf("%s", mains);
